@@ -1,171 +1,94 @@
-#include <stdio.h>
-#include <string.h>
-
-struct palabra{    
- int dimencion;
- char bar2[785];
-};
-
-/*
-struct foo fun() {
- struct foo fooObj;
- return fooObj;
-}*/
-
-//http://informatica.dgenp.unam.mx/recomendaciones/codigo-ascii
-//alt+39 ''
-//da el codigo ansi del char a encontrar
-int CodigoAnsi(unsigned char caracter)
-{
-  for(int i=0;i<127;i++)//255
-  {
-    if(caracter==i)
-    {
-      return i;
-    }else{
-      if(126==i)
-      { 
-        return 0;
-      }
-    }
+#include "texto.h"
+void gps_data_by_gprmc(const char* gprmc,char *hora,char *lat,char *lon,char *fecha){
+  if(comparar("$GPRMC\0",encontrarXchar(gprmc,0,','))){
+    strcpy(hora,encontrarXchar(gprmc,1,','));    
+    strcpy(lat,encontrarXchar(gprmc,3,','));
+    strcpy(lon,encontrarXchar(gprmc,5,','));
+    strcpy(fecha,encontrarXchar(gprmc,9,','));
+    hora[9]='\0';
+    lat[10]='\0';
+    lon[11]='\0';
+    fecha[6]='\0';
   }
 }
-
-//numeros de chars encontrados en el texto enviado
-int encontrarNseparador(const char* origin,int ansi)
-{
-  const int len = strlen(origin);
-  int encontrado=0;
-  for(int i=0;i<len+1;i++)
-  {
-    if(origin[i]==ansi)
-    {
-      encontrado++;
-    }
-  }
-  return encontrado;
+void know_len(const char* restrict name,const char* restrict texto){
+  printf(":%s: %i  %s\n",name,strlen(texto),texto);
 }
-
-//encuantra la longitud del char a encontrar
-int encontrarDchar(const char* origin,int ubicacion,unsigned char caracter)//texto,int,','
-{
-  int ansi =CodigoAnsi(caracter);
-  const int len = strlen(origin);
-  int encontrado=0;
-  int dimencion[encontrarNseparador(origin,ansi)];
-  int ubi[encontrarNseparador(origin,ansi)-1];
-  for(int i=0;i<len-1;i++)
-  {
-    if(i==0){dimencion[encontrado]=0;}
-    if(origin[i]==ansi)
-    {
-      ubi[encontrado]=i+1;
-      encontrado++;
-      dimencion[encontrado]=0;
-    }else{
-      dimencion[encontrado]+=1;
-    }
-  }
-  //printf("encontrado %i\n",encontrado);
-  return dimencion[ubicacion];
-}
-
-
-//encuentra la ubicacion del char a encontrar
-int encontrarUchar(const char* origin,int ubicacion,unsigned char caracter)//texto,int,','
-{
-  int ansi =CodigoAnsi(caracter);
-  const int len = strlen(origin);
-  int encontrado=0;
-  int dimencion[encontrarNseparador(origin,ansi)];
-  int ubi[encontrarNseparador(origin,ansi)-1];
-  for(int i=0;i<len-1;i++)
-  {
-    if(i==0){dimencion[encontrado]=0;}
-    if(origin[i]==ansi)
-    {
-      ubi[encontrado]=i+1;
-      encontrado++;
-      dimencion[encontrado]=0;
-    }else{
-      dimencion[encontrado]+=1;
-    }
-  }
-  //printf("encontrado %i\n",encontrado);
-  if(ubicacion == 0)
-  {
-    return 0;
-  }else{
-    return ubi[ubicacion-1];
-  }
-}
-/*
-printf("enNse %i\n",encontrarNseparador(origin,ansi));
-printf("len %i\n",len);
-dimencion[encontrado]++;
-printf(":eyes: %i %i\n",encontrado,dimencion[encontrado]);
-*/
-
-// encontrar el la palabra del char
-const char* encontrarXchar(const char* origin,int ubicacion,unsigned char caracter)//texto,int,','
-{
-  int ansi = CodigoAnsi(caracter);
-  int dim=encontrarDchar(origin,ubicacion,ansi);
-  int ubi=encontrarUchar(origin,ubicacion,ansi);
-  char word[dim];
-  for(int i=0;i<=dim;i++)
-  { 
-    word[i]=origin[ubi+i];
-    if(word[i]==ansi)
-    {
-      word[i]=0;
-    }
-  }
-  return word;
-}
-
-//concatenar armar json
-const char* armarJson(const char* nombre,const char* dato)//texto,int,','
-{
-  const int lenNombre = strlen(nombre);
-  printf(":name: %i %s\n",lenNombre,nombre);
-  const int lenDato = strlen(dato);
-  printf(":data: %i %s\n",lenDato,dato);
-  char word[lenNombre+lenDato+7];
-  word[0] = CodigoAnsi('{');
-  word[1] = CodigoAnsi('"');
-  for(int i=0;i<lenNombre;i++)
-  {
-      word[2+i] = nombre[i];
-      //printf(":eyes: %i %s\n",i,word);
-  }
-  word[lenNombre+2] = CodigoAnsi('"');
-  word[lenNombre+3] = CodigoAnsi(':');
-  word[lenNombre+4] = CodigoAnsi('"');
-  for(int i=0;i<lenDato;i++)
-  {
-    word[lenNombre+5+i] = CodigoAnsi(dato[i]);
-    //printf(":eyes: %i %s\n",i,word);
-    printf(":eyes: %i %i %c\n",lenDato,i,dato[i]);
-  }
-  word[lenNombre+5+lenDato] = CodigoAnsi('"');
-  word[lenNombre+6+lenDato] = CodigoAnsi('}');
-  return word;
-}
-
-
-int main() {
-  char val[11]="+CIPGSMLOC:";
-  char val2[53]="+CIPGSMLOC: 0,0.000000,0.000000,2022/03/14,21:58:02";
+void calcularjson(char* restrict hora,char* restrict lat,char* restrict lon,char* restrict fecha){
   
-  printf(" %s\n",val);
-  printf(" %s\n",val2);
+}
+int main() {
+
+  //    desde el modulo gps gtu7 
+  //$GPRMC,173225.00,A,0208.77699,S,07954.27105,W,0.871,,040422,,,A*73
+  //uint8_t* data_gps = (uint8_t*) malloc(1024+1);
+  //uint8_t data_gps;
+  char gprmc[100]="$GPRMC,173225.00,A,0208.77699,S,07954.27105,W,0.871,,040422,,,A*73\0";
+  know_len("gprmc",gprmc);
+  char hora[10];
+  char lat[11];
+  char lon[12];
+  char fecha[7];
+  printf(" ------------------------------------------------------\n");
+  gps_data_by_gprmc(gprmc,&hora,&lat,&lon,&fecha);
+  know_len("hora",hora);
+  know_len("lat",lat);
+  know_len("lon",lon);
+  know_len("fecha",fecha);
+  //printf(" %s\n",hora);
+  //printf(" %s\n",lat);
+  //printf(" %s\n",lon);
+  //printf(" %s\n",fecha);
+
+  
+  
+  
+  
+  /*
+  int l = encontrarDchar(gprmc,0,',');
+  printf(" %i\n",l);
+  char dato[l];
+  strcpy(dato,encontrarXchar(gprmc,0,','));
+  printf(" %s\n",dato);
+  int d =comparar("$GPRMC\0",dato);
+  printf(" %i\n",d);
+  */
+  //encontrarXchar(
+  //printf("val2 %s\n",gprmc);
+  //int l = encontrarDchar(val2,1,' ');
+  //printf(" %i\n",l);
+  //char dato[l];
+  //strcpy(dato,encontrarXchar(val2,1,' '));
+  //printf(" %s\n",dato);
+  //printf("json %s\n",armarJson("clave\0",dato));
+
+  
+  /*    desde la sim
+  char val[12]="+CIPGSMLOC:\0";
+  char val2[52]="+CIPGSMLOC: 0,0.000000,0.000000,2022/03/14,21:58:02\0";
+  char val5[12]="+CIPGSMLOC:\0";
+  printf("val %s\n",val);
+  printf("val2 %s\n",val2);
   int l = encontrarDchar(val2,1,' ');
   printf(" %i\n",l);
   char dato[l];
   strcpy(dato,encontrarXchar(val2,1,' '));
   printf(" %s\n",dato);
+  printf("json %s\n",armarJson("clave\0",dato));
+  */
 
+
+
+  
+  //printf("     000000000011111111112222222222333333333344444444445555555555\n");
+  //printf("     012345678901234567890123456789012345678901234567890123456789\n");
+  
+  /*
+  int l = encontrarDchar(val2,1,' ');
+  printf(" %i\n",l);
+  char dato[l];
+  strcpy(dato,encontrarXchar(val2,1,' '));
+  printf(" %s\n",dato);
   char json[11+l];
   strcpy(json,"{\"ubi\":\"");
   for(int i=0;i<l+1;i++)
@@ -174,15 +97,15 @@ int main() {
   }
   json[l+9] =34;//"
   json[l+10] =125;//}
-  json[l+11] =CodigoAnsi(' ');
-  json[l+12] =CodigoAnsi(' ');
-  json[l+13] =CodigoAnsi(' ');
-  json[l+14] =CodigoAnsi(' ');
-  //printf(" %s\n",json);
+  json[l+11] ='\0';//}
+  
+  printf(" %s\n",json);
   printf(":json: %i %s\n",strlen(json),json);
   printf(" %s\n",val);
   printf(" %s\n",val2);
   printf(" %s\n",dato);
+*/
+
   //printf(":eyes: %i %s\n",encontrarDchar(json,0,' '),encontrarXchar(json,0,' '));
   
   //char dato[l] = encontrarXchar(val2,1,' ');
@@ -207,10 +130,6 @@ int main() {
   printf(":json: %i %s\n",strlen(json),json);
   */
 
-
-
-
-  
   /*
   char newstr[11]="";
   char oldstr[44]="";//44
@@ -242,5 +161,6 @@ int main() {
   printf(":eyes: %i %s\n",encontrarDchar(objs,3,','),encontrarXchar(objs,3,','));
   printf(":json: %s\n",armarJson("ubi",encontrarXchar(objs,3,',')));
   */
+  
   return 0;
 }
