@@ -15,6 +15,7 @@ int main() {
   newjson = (char*)malloc (l*sizeof(char) );
   json_gps_data_by_gprmc("GPS",hora,lat,lon,fecha,&newjson);
   printf(" %s ",&newjson);
+  printf(" %s "
   return 0;
 }
 
