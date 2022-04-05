@@ -1,49 +1,76 @@
-#include "texto.h"
-void gps_data_by_gprmc(const char* gprmc,char *hora,char *lat,char *lon,char *fecha){
-  if(comparar("$GPRMC\0",encontrarXchar(gprmc,0,','))){
-    strcpy(hora,encontrarXchar(gprmc,1,','));    
-    strcpy(lat,encontrarXchar(gprmc,3,','));
-    strcpy(lon,encontrarXchar(gprmc,5,','));
-    strcpy(fecha,encontrarXchar(gprmc,9,','));
-    hora[9]='\0';
-    lat[10]='\0';
-    lon[11]='\0';
-    fecha[6]='\0';
-  }
-}
-void know_len(const char* restrict name,const char* restrict texto){
-  printf(":%s: %i  %s\n",name,strlen(texto),texto);
-}
-void calcularjson(char* restrict hora,char* restrict lat,char* restrict lon,char* restrict fecha){
-  
-}
-int main() {
 
+#include "texto.h"
+
+int main() {
   //    desde el modulo gps gtu7 
   //$GPRMC,173225.00,A,0208.77699,S,07954.27105,W,0.871,,040422,,,A*73
+  char gprmc[100]="$GPRMC,173225.00,A,0208.77699,S,07954.27105,W,0.871,,040422,,,A*73\0";
+  char hora[12];
+  char lat[12];
+  char lon[13];
+  char fecha[8];
+  gps_data_by_gprmc(gprmc,&hora,&lat,&lon,&fecha);
+  int l=calcularjson("GPS",hora,lat,lon,fecha);
+  char* newjson;
+  newjson = (char*)malloc (l*sizeof(char) );
+  json_gps_data_by_gprmc("GPS",hora,lat,lon,fecha,&newjson);
+  printf(" %s ",&newjson);
+  return 0;
+}
+
+/*
   //uint8_t* data_gps = (uint8_t*) malloc(1024+1);
   //uint8_t data_gps;
+  //int8_t
   char gprmc[100]="$GPRMC,173225.00,A,0208.77699,S,07954.27105,W,0.871,,040422,,,A*73\0";
-  know_len("gprmc",gprmc);
-  char hora[10];
-  char lat[11];
-  char lon[12];
-  char fecha[7];
-  printf(" ------------------------------------------------------\n");
+  //know_len("gprmc",gprmc);
+  char hora[12];
+  char lat[12];
+  char lon[13];
+  char fecha[8];
+  //printf(" ------------------------------------------------------\n");
   gps_data_by_gprmc(gprmc,&hora,&lat,&lon,&fecha);
-  know_len("hora",hora);
-  know_len("lat",lat);
-  know_len("lon",lon);
-  know_len("fecha",fecha);
-  //printf(" %s\n",hora);
-  //printf(" %s\n",lat);
-  //printf(" %s\n",lon);
-  //printf(" %s\n",fecha);
+  //know_len("hora",hora);
+  //know_len("lat",lat);
+  //know_len("lon",lon);
+  //know_len("fecha",fecha);
+  int l=calcularjson("GPS",hora,lat,lon,fecha);
+  //printf(":l: %i  \n",l);
+  char* newjson;
+  newjson = (char*)malloc (l*sizeof(char) );
+  //char newjson[l];
+  //newjson = (char*)malloc (l*sizeof(char) );
+  //printf(" ------------------------------------------------------\n");
+  //rintf(" ------------------------------------------------------\n");
+  json_gps_data_by_gprmc("GPS",hora,lat,lon,fecha,&newjson);
+  //know_len("newjson",newjson);
+  printf(" %s ",&newjson);
+*/
 
-  
-  
-  
-  
+//know_len("newjson",newjson);
+  //know_len("hora",hora);
+  //know_len("lat",lat);
+  //know_len("lon",lon);
+  //know_len("fecha",fecha);
+//know_len("newjson",newjson);
+  //printf(" ------------------------------------------------------\n");
+  //know_len("hora",hora);
+  //know_len("lat",lat);
+  //know_len("lon",lon);
+  //know_len("fecha",fecha);
+  //know_len("newjson",newjson);
+  //free(newjson);
+  /*
+  #include <stdlib.h>
+
+  int* ptr;
+  int* ptr2;
+  ptr = (int*)malloc ( 300*sizeof(int) );
+  ptr[33] = 15;
+  rellena_de_ceros (10,ptr);
+  ptr2 = ptr + 15;
+  free(ptr);	
+  */
   /*
   int l = encontrarDchar(gprmc,0,',');
   printf(" %i\n",l);
@@ -161,6 +188,13 @@ int main() {
   printf(":eyes: %i %s\n",encontrarDchar(objs,3,','),encontrarXchar(objs,3,','));
   printf(":json: %s\n",armarJson("ubi",encontrarXchar(objs,3,',')));
   */
-  
-  return 0;
-}
+  /*
+  char* hora;
+  hora= (char*)malloc (12*sizeof(char));
+  char* lat;
+  lat= (char*)malloc (12*sizeof(char));
+  char* lon;
+  lon= (char*)malloc (13*sizeof(char));
+  char* fecha;
+  fecha= (char*)malloc (8*sizeof(char));
+  */

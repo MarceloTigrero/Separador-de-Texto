@@ -16,7 +16,6 @@ void delay(int a)
 	}
 }*/
 
-
 int CodigoAnsi(unsigned char caracter)
 {
   for(int i=0;i<127;i++)//255
@@ -107,7 +106,7 @@ const char* encontrarXchar(const char* origin,int ubicacion,unsigned char caract
     word[i]=origin[ubi+i];
     if(word[i]==ansi)
     {
-      word[i]=0;
+      word[i]='\0';
     }
   }
   return word;
@@ -154,18 +153,13 @@ int comparar(const char* text1,const char* text2)
 const char* armarJson(const char* clave,const char* valor)
 {
   const int lenClave = strlen(clave);
-  //printf(":Clave: %i %s\n",lenClave,clave);
   const int lenValor = strlen(valor);
-  //printf(":valor: %i %s\n",lenValor,valor);
-  //printf("           000000000011111111112222222222333333333344444444445555555555\n");
-  //printf("           012345678901234567890123456789012345678901234567890123456789\n");
   char word[lenClave+lenValor+8];
   word[0] = CodigoAnsi('{');
   word[1] = CodigoAnsi('"');
   for(int i=0;i<lenClave;i++)
   {
       word[2+i] = clave[i];
-      //printf(":eyes: %i %s\n",i,word);
   }
   word[lenClave+2] = CodigoAnsi('"');
   word[lenClave+3] = CodigoAnsi(':');
@@ -173,22 +167,145 @@ const char* armarJson(const char* clave,const char* valor)
   for(int i=0;i<lenValor;i++)
   {
     word[lenClave+5+i] = CodigoAnsi(valor[i]);
-    //printf(":eyes: %i %s\n",i,word);
-    //printf(":eyes: %i %c\n",lenClave+5+i,valor[i]);
   }
   word[lenClave+lenValor+5] = CodigoAnsi('"');
-  //printf(":eyes: %i %s\n",lenClave+lenValor+5,word);
   word[lenClave+lenValor+6] = CodigoAnsi('}');
-  //printf(":eyes: %i %s\n",lenClave+lenValor+6,word);
   word[lenClave+lenValor+7] ='\0';
-  //printf(":word: %s\n",word);
   printf(":word: %i %s\n",strlen(word),word);
-  //printf(":eyes: %i %s\n",lenClave+lenValor+7,word);
   return word;
+}
+
+void gps_data_by_gprmc(const char* gprmc,char *hora,char *lat,char *lon,char *fecha){
+  if(comparar("$GPRMC\0",encontrarXchar(gprmc,0,','))){
+    strcpy(hora,encontrarXchar(gprmc,1,','));    
+    strcpy(lat,encontrarXchar(gprmc,3,','));
+    strcpy(lon,encontrarXchar(gprmc,5,','));
+    strcpy(fecha,encontrarXchar(gprmc,9,','));
+  }
+}
+
+void know_len(const char* restrict name,const char* restrict texto){
+  printf(":%s: %i =>%s\n",name,strlen(texto),texto);
+}
+
+int calcularjson(const char* restrict name,char* restrict hora,char* restrict lat,char* restrict lon,char* restrict fecha){ 
+  return strlen(name)+strlen(hora)+strlen(lat)+strlen(lon)+strlen(fecha)+1+2+1+2+1+1;
+}
+
+void json_gps_data_by_gprmc(const char* restrict name,char* restrict hora,char* restrict lat,char* restrict lon,char* restrict fecha,char *json){
+  int j=0;
+  json[j]='{';j++;
+  json[j]='"';j++;
+  for(int i=0;i<strlen(name);i++){
+    json[j+i]=name[i];
+  }
+  j+=strlen(name);
+  json[j]='"';j++;
+  json[j]=':';j++;
+  json[j]='"';j++;
+  for(int i=0;i<strlen(fecha);i++){
+    json[j+i]=fecha[i];
+  }
+  j+=strlen(fecha);
+  json[j]=',';j++;
+  for(int i=0;i<strlen(lon);i++){
+    json[j+i]=lon[i];
+  }
+  j+=strlen(lon); 
+  json[j]=',';j++;
+  for(int i=0;i<strlen(lat);i++){
+    json[j+i]=lat[i];
+  }
+  j+=strlen(lat);
+  json[j]=',';j++;
+  for(int i=0;i<strlen(hora);i++){
+    json[j+i]=hora[i];
+  }
+  j+=strlen(hora);
+  json[j]='"';j++;
+  json[j]='}';j++;
+  json[j]='\0';
 }
 
 
 
+
+
+
+
+/*
+void calcularjson(const char* restrict name,char* restrict hora,char* restrict lat,char* restrict lon,char* restrict fecha,int *l){
+  l=strlen(name)+strlen(hora)+strlen(lat)+strlen(lon)+strlen(fecha)+1+2+1+2+1+1;
+  printf(":: %i  \n",l);
+  //l=&l;
+}
+*/
+  //printf(":valor: %i %s\n",lenValor,valor);
+  //printf("           000000000011111111112222222222333333333344444444445555555555\n");
+  //printf("           012345678901234567890123456789012345678901234567890123456789\n");
+
+/*
+void json_gps_data_by_gprmcsff(const char* restrict name,char* restrict hora,char* restrict lat,char* restrict lon,char* restrict fecha,char *json){
+  int j=0;
+  //printf(":eyes: %c",json[j]);
+  json[j]='{';j++;
+  //printf(":eyes: %c",json[j]);
+  //know_len("eyes",json[0]);
+  json[j]='"';j++;
+  for(int i=0;i<strlen(name);i++){
+    json[j+i]=name[i];
+  }
+  //know_len("name",json);
+  j+=strlen(name);
+  json[j]='"';j++;
+  json[j]=':';j++;
+  json[j]='"';j++;
+  for(int i=0;i<strlen(hora);i++){
+    json[j+i]=hora[i];
+  }
+  //know_len("hora",json);
+  j+=strlen(hora);
+  json[j]=',';j++;
+  for(int i=0;i<strlen(lat);i++){
+    json[j+i]=lat[i];
+    printf(":eyes: %c\n",json[j+i]);
+  }
+  //know_len("lat",json);
+  //know_len("lat",lat);
+  //know_len("lon",lon);
+  j+=strlen(lat);
+  json[j]=',';j++;
+  for(int i=0;i<strlen(lon);i++){
+    json[j+i]=lon[i];
+    //printf(":eyes: %c\n",json[j+i]);
+  }
+  //know_len("lon",json);
+  //know_len("lon",lon);
+  j+=strlen(lon);
+  json[j]=',';j++;
+  for(int i=0;i<strlen(fecha);i++){
+    json[j+i]=fecha[i];
+  }
+  //know_len("fecha",json);
+  //know_len("fecha",fecha);
+  j+=strlen(fecha);
+  json[j]='"';j++;
+  json[j]='}';j++;
+  json[j]='\0';
+  //know_len("json",json);
+}
+
+
+
+int llenadochar(char* origen,char* texto,int j){
+  for(int i=0;i<strlen(texto);i++){
+    origen[j+i]=texto[i];
+  }
+  know_len("eyes",origen);
+  j=strlen(texto);
+  return j;
+}
+*/
   /*
   int l = encontrarDchar(val2,1,' ');
   printf(" %i\n",l);
