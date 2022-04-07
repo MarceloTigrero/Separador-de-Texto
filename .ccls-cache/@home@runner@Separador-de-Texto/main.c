@@ -1,7 +1,27 @@
 
 #include "texto.h"
+#include "string.h"
 
 int main() {
+  ///tratemiento de la captura de ubicacion en arduino con readstring
+ // {"ubi":"\n+CIPGSMLOC: 0,0.000000,0.000000,2022/04/07,20:48:25\n\nOK\nAT+CIPGSMLOC=1,1"}
+  char at[100]="{\"ubi\":\"\n+CIPGSMLOC: 0,0.000000,0.000000,2022/04/07,20:48:25\n\nOK\nAT+CIPGSMLOC=1,1\"}";
+  /*string txt ="{\"ubi\":\"\n+CIPGSMLOC: 0,0.000000,0.000000,2022/04/07,20:48:25\n\nOK\nAT+CIPGSMLOC=1,1\"}";*/
+know_len("at",at);
+  int l = encontrarDchar(at,1,'\n');
+  printf(" %i\n",l);
+  char dato[l];
+  strcpy(dato,encontrarXchar(at,1,'\n'));
+  printf(" %s\n",dato);
+ // int d =comparar("$GPRMC\0",dato);
+  
+  
+  
+
+  return 0;
+}
+
+/*
   //    desde el modulo gps gtu7 
   //$GPRMC,173225.00,A,0208.77699,S,07954.27105,W,0.871,,040422,,,A*73
   char gprmc[100]="$GPRMC,173225.00,A,0208.77699,S,07954.27105,W,0.871,,040422,,,A*73\0";
@@ -15,9 +35,8 @@ int main() {
   newjson = (char*)malloc (l*sizeof(char) );
   json_gps_data_by_gprmc("GPS",hora,lat,lon,fecha,&newjson);
   printf(" %s ",&newjson);
-  printf(" %s "
-  return 0;
-}
+  //printf(" sds ");
+*/
 
 /*
   //uint8_t* data_gps = (uint8_t*) malloc(1024+1);
