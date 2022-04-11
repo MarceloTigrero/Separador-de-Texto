@@ -59,6 +59,9 @@ https://github.com/raphaelbs/esp32-cam-ai-thinker/tree/master/examples
 https://github.com/raphaelbs/esp32-cam-ai-thinker/blob/master/docs/about-esp32-cam.md
 
 
-
-
+** comunicacion con el servidor mqqt __http__ sms
+https://www.micropeta.com/video65
+https://www.youtube.com/watch?v=ksgqeXDb874
+https://www.youtube.com/watch?v=27LGJlSv0Ww&list=PLWQQswW6kqpVBnzOSNGRZFZLXXxXHrXIO&index=2
+https://www.youtube.com/watch?v=ZMoQaQ95lUA
 */
